@@ -30,6 +30,6 @@ public class CameraFollow : MonoBehaviour
 
         //Ensure the camera is still looking at the target
         //We need this because the Lerp and smooth mean the camera will sometimes be slightly behind the character movement.
-        transform.LookAt(target);
+        transform.LookAt(smoothedPosition);
     }
 }
