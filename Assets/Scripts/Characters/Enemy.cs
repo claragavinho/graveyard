@@ -19,9 +19,12 @@ public class Enemy : MonoBehaviour
         currentScene = SceneManager.GetActiveScene().name;
     }
 
+
+
+
     private void RestartIfPlayerHit(GameObject collidingObj)
     {
-        
+
         if (collidingObj.tag == "Player") //Is the object we collided with is the player
         {
             // Debug.Log("Restarting"); 
@@ -33,25 +36,29 @@ public class Enemy : MonoBehaviour
     void Update()
     {
         Vector3 direction = player.position - transform.position;
-        //Debug.Log(direction);
+
         direction.Normalize();
         movement = direction;
 
+
+
     }
 
-    void FixedUpdate(){
+    void FixedUpdate()
+    {
 
         moveCharacter(movement);
 
     }
 
-    void moveCharacter(Vector2 direction){
+    void moveCharacter(Vector2 direction)
+    {
 
         rb.MovePosition((Vector2)transform.position + (direction * moveSpeed * Time.deltaTime));
 
     }
 
-     #region Collision Detection
+    #region Collision Detection
     void OnTriggerEnter2D(Collider2D other)
     {
         RestartIfPlayerHit(other.gameObject);
@@ -60,6 +67,17 @@ public class Enemy : MonoBehaviour
     void OnCollisionEnter2D(Collision2D other)
     {
         RestartIfPlayerHit(other.gameObject);
+        if (other.gameObject.tag == "ground")
+        {
+            Debug.Log("A");
+            Destroy(this.gameObject);
+        }
     }
+
+
+
+
     #endregion
 }
+
+
