@@ -6,40 +6,45 @@ using UnityEngine.SceneManagement;
 public class Enemy : MonoBehaviour
 {
 
-    public Transform player;
+    public GameObject player;
     public float moveSpeed = 1f;
     private Rigidbody2D rb;
     private Vector2 movement;
     string currentScene;
+    public float speed;
+    public Transform startingPoint;
+    public Transform colliderZone;
+    bool gotGrabbed;
 
     // Start is called before the first frame update
     void Start()
     {
+        player = FindObjectOfType<PlatformerController>().gameObject;
         rb = this.GetComponent<Rigidbody2D>();
         currentScene = SceneManager.GetActiveScene().name;
+        startingPoint = GameObject.Find("startingPoint").transform;
+        colliderZone = GameObject.Find("ColliderZone").transform;
     }
 
 
+    #region Collision Detection
 
-
-    private void RestartIfPlayerHit(GameObject collidingObj)
+    void OnCollisionEnter2D(Collision2D other)
     {
-
-        if (collidingObj.tag == "Player") //Is the object we collided with is the player
-        {
-            // Debug.Log("Restarting"); 
-            SceneManager.LoadScene(currentScene); //reload the level, as 'currentscene' refers to the one we're already in
-        }
+        gotGrabbed = true;
+    
     }
+
+    #endregion
+
 
     // Update is called once per frame
     void Update()
     {
-        Vector3 direction = player.position - transform.position;
+        Vector3 direction = player.transform.position - transform.position;
 
         direction.Normalize();
         movement = direction;
-
 
 
     }
@@ -49,6 +54,25 @@ public class Enemy : MonoBehaviour
 
         moveCharacter(movement);
 
+        if (gotGrabbed == true){
+
+            Vector2 target = new Vector2(startingPoint.position.x, startingPoint.position.y);
+            float step = speed * Time.deltaTime;
+            player.GetComponent<Collider2D>().enabled = false;
+            player.GetComponent<Rigidbody2D>().isKinematic = false;
+            player.transform.position = Vector2.Lerp(player.transform.position, startingPoint.transform.position, step);
+
+            if (player.transform.position.x <= colliderZone.position.x){
+                
+                gotGrabbed = false;
+                Destroy(this.gameObject);
+                player.GetComponent<Collider2D>().enabled = true;
+                player.GetComponent<Rigidbody2D>().isKinematic = false;
+                Debug.Log("S");
+            }
+
+        }
+
     }
 
     void moveCharacter(Vector2 direction)
@@ -57,27 +81,6 @@ public class Enemy : MonoBehaviour
         rb.MovePosition((Vector2)transform.position + (direction * moveSpeed * Time.deltaTime));
 
     }
-
-    #region Collision Detection
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        RestartIfPlayerHit(other.gameObject);
-    }
-
-    void OnCollisionEnter2D(Collision2D other)
-    {
-        RestartIfPlayerHit(other.gameObject);
-        if (other.gameObject.tag == "ground")
-        {
-            Debug.Log("A");
-            Destroy(this.gameObject);
-        }
-    }
-
-
-
-
-    #endregion
 }
 
 

@@ -126,6 +126,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 0}
   moveSpeed: 1
+  speed: 5
+  startingPoint: {fileID: 0}
+  colliderZone: {fileID: 0}
 --- !u!50 &368702595327484966
 Rigidbody2D:
   serializedVersion: 4
